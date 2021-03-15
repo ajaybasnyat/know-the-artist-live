@@ -19,8 +19,11 @@ const App = () => {
     if (initialRender.current) {
       initialRender.current = false;
     } else {
+      var artist;
+      for (artist in artists) {
+      console.log("artist: " + artist.name);
+      };
       searchArtist();
-      console.log(artists);
     }
   }, [query]);
 
@@ -46,6 +49,7 @@ const App = () => {
   spotifyApi.setAccessToken(token);
 
   const searchArtist = async () => {
+    
     spotifyApi.searchArtists(query).then(
       function (data) {
         console.log("res: ", data);
@@ -80,10 +84,11 @@ const App = () => {
           Search
         </button>
       </form>
-    
+      {/* map artist data to component props with id, name and images - some artists do not have images, so must check if images exist */}
       {artists.map(artists => (
-        <Artist key={artists.id} name={artists.name} image={artists.images[0].url}/>
+        <Artist key={artists.id} name={artists.name} image={artists.images.length>0 ? artists.images[1].url : ""}/>
       ))}
+      
     </div>
   );
 };
