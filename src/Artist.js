@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Artist = ({name, image}) => {
+const Artist = ({name, image, onClick}) => {
     return (
-        <div>
-            <h1>{name}</h1>
+        <div onClick={onClick}>
+            <h1>{name} </h1>
             <img src={image} alt=""/>
         </div>
     )

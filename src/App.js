@@ -2,12 +2,15 @@ import "./App.css";
 import React, { useState, useEffect, useRef } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 import Artist from "./Artist";
+import Track from "./Track";
 
 const App = () => {
   const [token, setToken] = useState("");
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [artists, setArtists] = useState([]);
+  const [currentArtist, setCurrentArtist] = useState("");
+  const [tracks, setTracks] = useState([]);
   const initialRender = useRef(true);
   
 
@@ -26,6 +29,10 @@ const App = () => {
       searchArtist();
     }
   }, [query]);
+
+  useEffect(() => {
+    getArtistTracks();
+  }, [currentArtist]);
 
   const getToken = async () => {
     const CLIENT_ID = "02c458fbde8b405ca33a9ce698c989e3";
@@ -61,6 +68,19 @@ const App = () => {
     );
   };
 
+  const getArtistTracks = async () => {
+    spotifyApi.getArtistTopTracks(currentArtist, "US").then(
+      function (data) {
+        console.log("top tracks: ", data);
+        setTracks(data.tracks);
+        setArtists([]);
+      },
+      function (err) {
+        console.error(err);
+      }
+    );
+  }
+
   const updateSearch = (e) => {
     setSearch(e.target.value);
   };
@@ -72,7 +92,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <h1>Hello </h1>
+      <h1>Know The Artist </h1>
       <form className="search-form" onSubmit={getSearch}>
         <input
           className="search-bar"
@@ -86,9 +106,14 @@ const App = () => {
       </form>
       {/* map artist data to component props with id, name and images - some artists do not have images, so must check if images exist */}
       {artists.map(artists => (
-        <Artist key={artists.id} name={artists.name} image={artists.images.length>0 ? artists.images[1].url : ""}/>
+        <Artist key={artists.id} name={artists.name} 
+                image={artists.images.length>0 ? artists.images[1].url : ""}
+                onClick={e => {setCurrentArtist(artists.id);
+                console.log(currentArtist)}}/>
       ))}
-      
+      {tracks.map(tracks => (
+        <Track key={tracks.id} title={tracks.name} />
+      ))}
     </div>
   );
 };
