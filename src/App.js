@@ -1,6 +1,7 @@
 import "./App.css";
 import React, { useState, useEffect, useRef } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Artist from "./Artist";
 import Track from "./Track";
 
@@ -12,7 +13,6 @@ const App = () => {
   const [currentArtist, setCurrentArtist] = useState("");
   const [tracks, setTracks] = useState([]);
   const initialRender = useRef(true);
-  
 
   useEffect(() => {
     getToken();
@@ -24,8 +24,8 @@ const App = () => {
     } else {
       var artist;
       for (artist in artists) {
-      console.log("artist: " + artist.name);
-      };
+        console.log("artist: " + artist.name);
+      }
       searchArtist();
     }
   }, [query]);
@@ -56,7 +56,6 @@ const App = () => {
   spotifyApi.setAccessToken(token);
 
   const searchArtist = async () => {
-    
     spotifyApi.searchArtists(query).then(
       function (data) {
         console.log("res: ", data);
@@ -79,7 +78,7 @@ const App = () => {
         console.error(err);
       }
     );
-  }
+  };
 
   const updateSearch = (e) => {
     setSearch(e.target.value);
@@ -105,15 +104,36 @@ const App = () => {
         </button>
       </form>
       {/* map artist data to component props with id, name and images - some artists do not have images, so must check if images exist */}
-      {artists.map(artists => (
-        <Artist key={artists.id} name={artists.name} 
-                image={artists.images.length>0 ? artists.images[1].url : ""}
-                onClick={e => {setCurrentArtist(artists.id);
-                console.log(currentArtist)}}/>
+      {artists.map((artists) => (
+        <Artist
+          key={artists.id}
+          name={artists.name}
+          image={artists.images.length > 0 ? artists.images[1].url : ""}
+          onClick={(e) => {
+            setCurrentArtist(artists.id);
+            console.log(currentArtist);
+          }}
+        />
       ))}
-      {tracks.map(tracks => (
-        <Track key={tracks.id} title={tracks.name} />
-      ))}
+      <DragDropContext>
+        <Droppable droppableId="tracks">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {tracks.map((tracks, index) => {
+                return (
+                  <Draggable key={tracks.id} draggableId={tracks.id} index={index}>
+                    {(provided) => (
+                      <Track key={tracks.id} title={tracks.name} 
+                        ref={provided.innerRef} {...provided.draggableProps} 
+                        {...provided.dragHandleProps} />
+                    )}
+                  </Draggable>
+                )
+              })}
+            </div>
+          )}
+        </Droppable>
+       </DragDropContext>
     </div>
   );
 };

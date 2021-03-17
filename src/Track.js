@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Artist = ({title}) => {
+const Artist = ({title, ref}) => {
     return (
         <div >
             <h1>{title}</h1>
