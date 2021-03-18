@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Artist from "./Artist";
-import Track from "./Track";
+import shuffle from "shuffle-array";
 
 const App = () => {
   const [token, setToken] = useState("");
@@ -51,7 +51,6 @@ const App = () => {
     return data.access_token;
   };
 
-  var Spotify = require("spotify-web-api-js");
   var spotifyApi = new SpotifyWebApi();
   spotifyApi.setAccessToken(token);
 
@@ -71,7 +70,13 @@ const App = () => {
     spotifyApi.getArtistTopTracks(currentArtist, "US").then(
       function (data) {
         console.log("top tracks: ", data);
-        setTracks(data.tracks);
+        // get top 5 tracks (by default gets top 10 tracks)
+        var topTracks = data.tracks.slice(0, 5)
+        // randomize order (by default they are returned by popularity)
+        shuffle(topTracks)
+        // set the tracks
+        setTracks(topTracks);
+        // clear artist search
         setArtists([]);
       },
       function (err) {
@@ -88,6 +93,16 @@ const App = () => {
     e.preventDefault();
     setQuery(search);
   };
+
+  function handleOnDragEnd(result) {
+    if (!result.destination) return;
+
+    const items = Array.from(tracks);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setTracks(items);
+  }
 
   return (
     <div className="App">
@@ -115,25 +130,27 @@ const App = () => {
           }}
         />
       ))}
-      <DragDropContext>
+      <DragDropContext onDragEnd={handleOnDragEnd}>
         <Droppable droppableId="tracks">
           {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
+            <ul className="tracks" {...provided.droppableProps} ref={provided.innerRef}>
               {tracks.map((tracks, index) => {
                 return (
                   <Draggable key={tracks.id} draggableId={tracks.id} index={index}>
                     {(provided) => (
-                      <Track key={tracks.id} title={tracks.name} 
-                        ref={provided.innerRef} {...provided.draggableProps} 
-                        {...provided.dragHandleProps} />
+                      <li ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                       <p>{ tracks.name }</p>
+                     </li>
                     )}
                   </Draggable>
                 )
               })}
-            </div>
+              {provided.placeholder}
+            </ul>
           )}
         </Droppable>
        </DragDropContext>
+       <button>Submit</button>
     </div>
   );
 };
