@@ -4,6 +4,7 @@ import SpotifyWebApi from "spotify-web-api-js";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Artist from "./Artist";
 import shuffle from "shuffle-array";
+require('dotenv').config();
 
 const App = () => {
   const [token, setToken] = useState("");
@@ -13,6 +14,8 @@ const App = () => {
   const [currentArtist, setCurrentArtist] = useState("");
   const [tracks, setTracks] = useState([]);
   const initialRender = useRef(true);
+
+  
 
   useEffect(() => {
     getToken();
@@ -35,8 +38,10 @@ const App = () => {
   }, [currentArtist]);
 
   const getToken = async () => {
-    const CLIENT_ID = "02c458fbde8b405ca33a9ce698c989e3";
-    const CLIENT_SECRET = "c29d45caaf114e9b9fcad204dd174aea";
+    
+    const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
+    const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET;
+    console.log(process.env)
 
     const result = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
