@@ -13,35 +13,33 @@ const App = () => {
   const [artists, setArtists] = useState([]);
   const [currentArtist, setCurrentArtist] = useState("");
   const [tracks, setTracks] = useState([]);
+  const [orderedTracks, setOrderedTracks] = useState([]);
+  const [showSubmitButton, setShowSubmitButton] = useState(false);
   const initialRender = useRef(true);
-
-  
 
   useEffect(() => {
     getToken();
   }, []);
 
   useEffect(() => {
+    if (!initialRender.current) {
+      getArtistTracks();
+      setShowSubmitButton(true);
+    }
+  }, [currentArtist]);
+
+  useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
     } else {
-      var artist;
-      for (artist in artists) {
-        console.log("artist: " + artist.name);
-      }
       searchArtist();
     }
   }, [query]);
-
-  useEffect(() => {
-    getArtistTracks();
-  }, [currentArtist]);
 
   const getToken = async () => {
     
     const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
     const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET;
-    console.log(process.env)
 
     const result = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
@@ -62,7 +60,6 @@ const App = () => {
   const searchArtist = async () => {
     spotifyApi.searchArtists(query).then(
       function (data) {
-        console.log("res: ", data);
         setArtists(data.artists.items);
       },
       function (err) {
@@ -74,13 +71,15 @@ const App = () => {
   const getArtistTracks = async () => {
     spotifyApi.getArtistTopTracks(currentArtist, "US").then(
       function (data) {
-        console.log("top tracks: ", data);
         // get top 5 tracks (by default gets top 10 tracks)
-        var topTracks = data.tracks.slice(0, 5)
-        // randomize order (by default they are returned by popularity)
-        shuffle(topTracks)
+        var tracksInOrder = data.tracks.slice(0, 5);
+        // update ordered tracks
+        setOrderedTracks(tracksInOrder);
+        // copy array and randomize order (by default they are returned by popularity)
+        var tracksRandomized = [...tracksInOrder];
+        shuffle(tracksRandomized);
         // set the tracks
-        setTracks(topTracks);
+        setTracks(tracksRandomized);
         // clear artist search
         setArtists([]);
       },
@@ -109,9 +108,20 @@ const App = () => {
     setTracks(items);
   }
 
+  function onSubmit() {
+    var count = 0
+    tracks.forEach(function(track, i) {
+      if (track == orderedTracks[i]) {
+        count++;
+      }
+    }) 
+    console.log(count);
+    setShowSubmitButton(false);
+  }
+
   return (
     <div className="App">
-      <h1>Know The Artist </h1>
+      <h1>Know The Artist</h1>
       <form className="search-form" onSubmit={getSearch}>
         <input
           className="search-bar"
@@ -131,7 +141,6 @@ const App = () => {
           image={artists.images.length > 0 ? artists.images[1].url : ""}
           onClick={(e) => {
             setCurrentArtist(artists.id);
-            console.log(currentArtist);
           }}
         />
       ))}
@@ -155,7 +164,7 @@ const App = () => {
           )}
         </Droppable>
        </DragDropContext>
-       <button>Submit</button>
+       {showSubmitButton ? <button onClick={onSubmit}>Submit</button> : null}
     </div>
   );
 };
