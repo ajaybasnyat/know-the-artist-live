@@ -4,7 +4,8 @@ import SpotifyWebApi from "spotify-web-api-js";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Artist from "./Artist";
 import shuffle from "shuffle-array";
-require('dotenv').config();
+import { render } from "@testing-library/react";
+require("dotenv").config();
 
 const App = () => {
   const [token, setToken] = useState("");
@@ -15,6 +16,8 @@ const App = () => {
   const [tracks, setTracks] = useState([]);
   const [orderedTracks, setOrderedTracks] = useState([]);
   const [showSubmitButton, setShowSubmitButton] = useState(false);
+  const [renderResults, setRenderResults] = useState(false);
+  const [relatedArtists, setRelatedArtists] = useState([]);
   const initialRender = useRef(true);
 
   useEffect(() => {
@@ -25,6 +28,9 @@ const App = () => {
     if (!initialRender.current) {
       getArtistTracks();
       setShowSubmitButton(true);
+      // get related artists
+      getRelatedArtists();
+      setRenderResults(false);
     }
   }, [currentArtist]);
 
@@ -33,11 +39,13 @@ const App = () => {
       initialRender.current = false;
     } else {
       searchArtist();
+      setRenderResults(false);
+      setTracks([]);
+      setOrderedTracks([]);
     }
   }, [query]);
 
   const getToken = async () => {
-    
     const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
     const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET;
 
@@ -61,6 +69,17 @@ const App = () => {
     spotifyApi.searchArtists(query).then(
       function (data) {
         setArtists(data.artists.items);
+      },
+      function (err) {
+        console.error(err);
+      }
+    );
+  };
+
+  const getRelatedArtists = async () => {
+    spotifyApi.getArtistRelatedArtists(currentArtist).then(
+      function (data) {
+        setRelatedArtists(data.artists.slice(0, 5));
       },
       function (err) {
         console.error(err);
@@ -109,14 +128,15 @@ const App = () => {
   }
 
   function onSubmit() {
-    var count = 0
-    tracks.forEach(function(track, i) {
+    var count = 0;
+    tracks.forEach(function (track, i) {
       if (track == orderedTracks[i]) {
         count++;
       }
-    }) 
-    console.log(count);
+    });
+    console.log(orderedTracks);
     setShowSubmitButton(false);
+    setRenderResults(true);
   }
 
   return (
@@ -147,24 +167,69 @@ const App = () => {
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <Droppable droppableId="tracks">
           {(provided) => (
-            <ul className="tracks" {...provided.droppableProps} ref={provided.innerRef}>
+            <ul
+              className="tracks"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
               {tracks.map((tracks, index) => {
                 return (
-                  <Draggable key={tracks.id} draggableId={tracks.id} index={index}>
+                  <Draggable
+                    key={tracks.id}
+                    draggableId={tracks.id}
+                    index={index}
+                  >
                     {(provided) => (
-                      <li ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                       <p>{ tracks.name }</p>
-                     </li>
+                      <li
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <p>{tracks.name}</p>
+                      </li>
                     )}
                   </Draggable>
-                )
+                );
               })}
               {provided.placeholder}
             </ul>
           )}
         </Droppable>
-       </DragDropContext>
-       {showSubmitButton ? <button onClick={onSubmit}>Submit</button> : null}
+      </DragDropContext>
+      {showSubmitButton ? <button onClick={onSubmit}>Submit</button> : null}
+      {renderResults ? (
+        <div>
+          <h1>Answer: </h1>
+          <ul className="orderedTracks">
+            {orderedTracks.map((orderedTracks) => {
+              return (
+              <li>
+                <p>{orderedTracks.name}</p>
+              </li>
+              )
+            })}
+          </ul>
+        {/* </div> */}
+      {/* // ) : null} */}
+      {/* {renderResults ? ( */}
+        {/* <div> */}
+          <h1>Related Artists</h1>
+          {relatedArtists.map((relatedArtists) => (
+            <Artist
+              key={relatedArtists.id}
+              name={relatedArtists.name}
+              image={
+                relatedArtists.images.length > 0
+                  ? relatedArtists.images[1].url
+                  : ""
+              }
+              onClick={(e) => {
+                setCurrentArtist(relatedArtists.id);
+              }}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 };
