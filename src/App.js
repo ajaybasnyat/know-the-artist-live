@@ -148,14 +148,10 @@ const App = () => {
   const getItemStyle = (isDragging, draggableStyle) => ({
   
     // change background colour if dragging
-    background: isDragging ? "MediumSeaGreen" : "DarkSlateGray",
+    background: isDragging ? "MediumSeaGreen" : "#242424",
   
     // styles we need to apply on draggables
     ...draggableStyle
-  });
-  
-  const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? "#242424" : "#242424"
   });
 
   return (
@@ -185,12 +181,11 @@ const App = () => {
       ))}
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <Droppable droppableId="tracks">
-          {(provided, snapshot) => (
+          {(provided) => (
             <ol
               className="tracks"
               {...provided.droppableProps}
               ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
             >
               {tracks.map((tracks, index) => {
                 return (
@@ -209,7 +204,7 @@ const App = () => {
                           provided.draggableProps.style
                         )}
                       >
-                        <h3 className={(tracks.correct && renderResults) ? 'correctTrack' : (!tracks.correct && renderResults) ? 'incorrectTrack' : ''}>{tracks.name}</h3>
+                        <h3 id='track-name' className={(tracks.correct && renderResults) ? 'correctTrack' : (!tracks.correct && renderResults) ? 'incorrectTrack' : ''}>{tracks.name}</h3>
                       </li>
                     )}
                   </Draggable>
@@ -223,8 +218,8 @@ const App = () => {
       {showSubmitButton ? <button className='btn' onClick={onSubmit}>Submit</button> : null}
       {renderResults ? (
         <div>
-          <h1>{numCorrectTracks} / 5 correct</h1>
-          <h1>Answer: </h1>
+          <h2>{numCorrectTracks} / 5 correct</h2>
+          <h2>Correct Order: </h2>
           <ol className="orderedTracks">
             {orderedTracks.map((orderedTracks) => {
               return (
@@ -234,7 +229,7 @@ const App = () => {
               )
             })}
           </ol>
-          <h1>Related Artists</h1>
+          <h2>Related Artists</h2>
           {relatedArtists.map((relatedArtists) => (
             <Artist
               key={relatedArtists.id}
