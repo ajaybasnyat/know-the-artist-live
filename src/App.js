@@ -4,7 +4,6 @@ import SpotifyWebApi from "spotify-web-api-js";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Artist from "./Artist";
 import shuffle from "shuffle-array";
-import { render } from "@testing-library/react";
 require("dotenv").config();
 
 const App = () => {
@@ -18,6 +17,7 @@ const App = () => {
   const [showSubmitButton, setShowSubmitButton] = useState(false);
   const [renderResults, setRenderResults] = useState(false);
   const [relatedArtists, setRelatedArtists] = useState([]);
+  const [numCorrectTracks, setNumCorrectTracks] = useState(0);
   const initialRender = useRef(true);
 
   useEffect(() => {
@@ -115,6 +115,7 @@ const App = () => {
   const getSearch = (e) => {
     e.preventDefault();
     setQuery(search);
+    setSearch('');
   };
 
   function handleOnDragEnd(result) {
@@ -132,12 +133,36 @@ const App = () => {
     tracks.forEach(function (track, i) {
       if (track == orderedTracks[i]) {
         count++;
+        orderedTracks[i].correct = true;
+        tracks[i].correct = true;
+      }
+      else {
+        tracks[i].correct = false;
       }
     });
-    console.log(orderedTracks);
     setShowSubmitButton(false);
     setRenderResults(true);
+    setNumCorrectTracks(count);
   }
+
+  const getItemStyle = (isDragging, draggableStyle) => ({
+    // some basic styles to make the items look a bit nicer
+    userSelect: "none",
+    padding: 16,
+    margin: `0 0 10px 0`,
+  
+    // change background colour if dragging
+    background: isDragging ? "#61dafb" : "grey",
+  
+    // styles we need to apply on draggables
+    ...draggableStyle
+  });
+  
+  const getListStyle = isDraggingOver => ({
+    background: isDraggingOver ? "lightblue" : "#242424",
+    padding: 8,
+    width: 250
+  });
 
   return (
     <div className="App">
@@ -149,7 +174,7 @@ const App = () => {
           value={search}
           onChange={updateSearch}
         />
-        <button className="search-button" type="submit">
+        <button className="btn" type="submit">
           Search
         </button>
       </form>
@@ -166,11 +191,12 @@ const App = () => {
       ))}
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <Droppable droppableId="tracks">
-          {(provided) => (
-            <ul
+          {(provided, snapshot) => (
+            <ol
               className="tracks"
               {...provided.droppableProps}
               ref={provided.innerRef}
+              style={getListStyle(snapshot.isDraggingOver)}
             >
               {tracks.map((tracks, index) => {
                 return (
@@ -179,40 +205,41 @@ const App = () => {
                     draggableId={tracks.id}
                     index={index}
                   >
-                    {(provided) => (
+                    {(provided, snapshot) => (
                       <li
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
+                        style={getItemStyle(
+                          snapshot.isDragging,
+                          provided.draggableProps.style
+                        )}
                       >
-                        <p>{tracks.name}</p>
+                        <h3 className={(tracks.correct && renderResults) ? 'correctTrack' : (!tracks.correct && renderResults) ? 'incorrectTrack' : ''}>{tracks.name}</h3>
                       </li>
                     )}
                   </Draggable>
                 );
               })}
               {provided.placeholder}
-            </ul>
+            </ol>
           )}
         </Droppable>
       </DragDropContext>
-      {showSubmitButton ? <button onClick={onSubmit}>Submit</button> : null}
+      {showSubmitButton ? <button className='btn' onClick={onSubmit}>Submit</button> : null}
       {renderResults ? (
         <div>
+          <h1>{numCorrectTracks} / 5 correct</h1>
           <h1>Answer: </h1>
-          <ul className="orderedTracks">
+          <ol className="orderedTracks">
             {orderedTracks.map((orderedTracks) => {
               return (
-              <li>
-                <p>{orderedTracks.name}</p>
+              <li key={orderedTracks.id}>
+                <h3 className={orderedTracks.correct ? 'correctTrack' : 'incorrectTrack'}>{orderedTracks.name}</h3>
               </li>
               )
             })}
-          </ul>
-        {/* </div> */}
-      {/* // ) : null} */}
-      {/* {renderResults ? ( */}
-        {/* <div> */}
+          </ol>
           <h1>Related Artists</h1>
           {relatedArtists.map((relatedArtists) => (
             <Artist

@@ -17,4 +17,50 @@
   color: #61dafb;
 }
 
+.correctTrack {
+  color:green;
+}
 
+.incorrectTrack {
+  color: red;
+}
+
+body {
+  background-color: #242424;
+}
+
+h1 {
+  color: rgb(80, 194, 80);
+}
+
+h2 {
+  color: white;
+}
+
+h3 {
+  color: white;
+}
+
+p {
+  color: white;
+}
+
+ul {
+  list-style-type: none;
+  background: rgb(61, 61, 61);
+}
+
+ul li {
+  border: line-width=4px;
+  padding: 20px;
+}
+
+.btn {
+  color:white;
+  background: #242424;
+}
+
+.btn:hover {
+  color: green;
+  background: white;
+}
