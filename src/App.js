@@ -146,22 +146,16 @@ const App = () => {
   }
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: "none",
-    padding: 16,
-    margin: `0 0 10px 0`,
   
     // change background colour if dragging
-    background: isDragging ? "#61dafb" : "grey",
+    background: isDragging ? "MediumSeaGreen" : "DarkSlateGray",
   
     // styles we need to apply on draggables
     ...draggableStyle
   });
   
   const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? "lightblue" : "#242424",
-    padding: 8,
-    width: 250
+    background: isDraggingOver ? "#242424" : "#242424"
   });
 
   return (

@@ -18,11 +18,11 @@
 }
 
 .correctTrack {
-  color:green;
+  color:MediumSeaGreen;
 }
 
 .incorrectTrack {
-  color: red;
+  color: tomato;
 }
 
 body {
@@ -30,7 +30,7 @@ body {
 }
 
 h1 {
-  color: rgb(80, 194, 80);
+  color: MediumSeaGreen;
 }
 
 h2 {
@@ -45,19 +45,25 @@ p {
   color: white;
 }
 
-ul {
-  list-style-type: none;
-  background: rgb(61, 61, 61);
+ol {
+  /* background: darkslategray; */
+  margin-left: 15%;
+  margin-right: 15%;
+  color: white;
+  text-align: center;
+  list-style-position: inside;
 }
 
-ul li {
-  border: line-width=4px;
-  padding: 20px;
+ol li {
+  padding: 1vw;
+  margin-bottom: 1vw;
+  user-select: none;
 }
 
 .btn {
   color:white;
   background: #242424;
+  border: solid;
 }
 
 .btn:hover {
