@@ -5,6 +5,8 @@ body {
   text-align: center;
   font-family: 'Quicksand', sans-serif;
   font-weight: 400;
+  position: relative;
+  min-height: 100vh;
 }
 
 h1 {
@@ -24,6 +26,7 @@ h3 {
 
 p {
   color: white;
+  font-size: smaller;
 }
 
 ol {
@@ -92,10 +95,6 @@ img {
   font-weight: 500;
 }
 
-.search-bar::selection {
-  border-style: none;
-}
-
 .correctTrack {
   color:MediumSeaGreen;
 }
@@ -128,3 +127,15 @@ img {
   color: MediumSeaGreen;
   transition: 0.25s;
 }
+
+.related-artists-h2 {
+  margin-top: 75px;
+  color: hotpink;
+  font-size: xx-large;
+}
+
+.correct-order-h2 {
+  color:mediumseagreen;
+}
+
+

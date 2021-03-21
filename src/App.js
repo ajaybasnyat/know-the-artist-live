@@ -157,6 +157,8 @@ const App = () => {
   return (
     <div className="App">
       <h1>Know The Artist</h1>
+      <p>Search an artist and try to arrange their top five tracks from most to least popular</p> 
+      
       <form className="search-form" onSubmit={getSearch}>
         <input
           className="search-bar"
@@ -164,9 +166,7 @@ const App = () => {
           value={search}
           onChange={updateSearch}
         />
-        <button className="btn" type="submit">
-          Search
-        </button>
+        <button className="btn" type="submit"> Search </button>
       </form>
       {/* map artist data to component props with id, name and images - some artists do not have images, so must check if images exist */}
       {artists.map((artists) => (
@@ -218,8 +218,8 @@ const App = () => {
       {showSubmitButton ? <button className='btn' onClick={onSubmit}>Submit</button> : null}
       {renderResults ? (
         <div>
-          <h2>{numCorrectTracks} / 5 correct</h2>
-          <h2>Correct Order: </h2>
+          <h2>Your score: {numCorrectTracks} / 5 </h2>
+          <h2 className='correct-order-h2'>Correct Order: </h2>
           <ol className="orderedTracks">
             {orderedTracks.map((orderedTracks) => {
               return (
@@ -229,7 +229,7 @@ const App = () => {
               )
             })}
           </ol>
-          <h2>Related Artists</h2>
+          <h2 className='related-artists-h2'>Related Artists</h2>
           {relatedArtists.map((relatedArtists) => (
             <Artist
               key={relatedArtists.id}
