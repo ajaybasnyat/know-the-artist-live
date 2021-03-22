@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/know-the-artist-live/static/css/main.688c5314.chunk.css",
+    "main.js": "/know-the-artist-live/static/js/main.1a8127db.chunk.js",
+    "main.js.map": "/know-the-artist-live/static/js/main.1a8127db.chunk.js.map",
+    "runtime-main.js": "/know-the-artist-live/static/js/runtime-main.f21bfd08.js",
+    "runtime-main.js.map": "/know-the-artist-live/static/js/runtime-main.f21bfd08.js.map",
+    "static/js/2.f8119e59.chunk.js": "/know-the-artist-live/static/js/2.f8119e59.chunk.js",
+    "static/js/2.f8119e59.chunk.js.map": "/know-the-artist-live/static/js/2.f8119e59.chunk.js.map",
+    "static/js/3.b68a161e.chunk.js": "/know-the-artist-live/static/js/3.b68a161e.chunk.js",
+    "static/js/3.b68a161e.chunk.js.map": "/know-the-artist-live/static/js/3.b68a161e.chunk.js.map",
+    "index.html": "/know-the-artist-live/index.html",
+    "static/css/main.688c5314.chunk.css.map": "/know-the-artist-live/static/css/main.688c5314.chunk.css.map",
+    "static/js/2.f8119e59.chunk.js.LICENSE.txt": "/know-the-artist-live/static/js/2.f8119e59.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f21bfd08.js",
+    "static/js/2.f8119e59.chunk.js",
+    "static/css/main.688c5314.chunk.css",
+    "static/js/main.1a8127db.chunk.js"
+  ]
+}
