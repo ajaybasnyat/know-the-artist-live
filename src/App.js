@@ -8,7 +8,6 @@ require("dotenv").config();
 
 // application
 const App = () => {
-  // STATES
   // token for api access
   const [token, setToken] = useState("");
   // search bar input
@@ -64,8 +63,9 @@ const App = () => {
     } else {  
       // search for the artist
       searchArtist();
-      // render results
+      // set render results
       setRenderResults(false);
+      setShowSubmitButton(false);
       // reset tracks
       setTracks([]);
       // reset ordered tracks
@@ -91,10 +91,12 @@ const App = () => {
     // get res and set as token
     const data = await result.json();
     setToken(data.access_token);
-    spotifyApi.setAccessToken(token);
   };
 
-  // method to search for artist
+  // set token to wrapper class object
+  spotifyApi.setAccessToken(token);
+
+  // method to search for artists
   const searchArtist = async () => {
     spotifyApi.searchArtists(query).then(
       function (data) {
@@ -190,9 +192,10 @@ const App = () => {
   }
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    // change background color if dragging
+    // change background colour if dragging
     background: isDragging ? "MediumSeaGreen" : "#242424",
-    // apply on all draggables
+  
+    // styles we need to apply on draggables
     ...draggableStyle
   });
 
@@ -232,7 +235,6 @@ const App = () => {
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {/* map tracks to draggable objects */}
               {tracks.map((tracks, index) => {
                 return (
                   <Draggable
@@ -250,7 +252,6 @@ const App = () => {
                           provided.draggableProps.style
                         )}
                       >
-                        {/* set track classname for color coded results */}
                         <h3 id='track-name' className={(tracks.correct && renderResults) ? 'correctTrack' : (!tracks.correct && renderResults) ? 'incorrectTrack' : ''}>{tracks.name}</h3>
                       </li>
                     )}
@@ -262,7 +263,6 @@ const App = () => {
           )}
         </Droppable>
       </DragDropContext>
-      {/* show submit button if applicable */}
       {showSubmitButton ? <button className='btn' onClick={onSubmit}>Submit</button> : null}
       {/* render results if applicable */}
       {renderResults ? (
