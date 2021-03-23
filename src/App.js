@@ -203,7 +203,7 @@ const App = () => {
   return (
     <div className="App">
       <h1>Know The Artist</h1>
-      <p>Search an artist and try to arrange their top five tracks from most to least popular</p> 
+      <p>Search for an artist and try to arrange their top five tracks from most to least popular</p> 
       
       <form className="search-form" onSubmit={getSearch}>
         <input
